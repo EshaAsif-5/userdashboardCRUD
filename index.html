@@ -433,33 +433,24 @@ td img {
         {id:2, first_name:"Jane", last_name:"Smith", email:"jane.smith@example.com", avatar:"https://i.pravatar.cc/48?u=jane"}
     ];
 
-async function fetchUsers() {
-    try {
-        const allEmails = new Set();
-        let allApiUsers = [];
-
-        // Fetch first 2 (or more) pages
-        for (let p = 1; p <= 2; p++) { // change 2 → more pages if needed
-            const res = await fetch(`https://reqres.in/api/users?page=${p}`);
+    async function fetchUsers(page = 1) {
+        try {
+            const res = await fetch(`https://reqres.in/api/users?page=${page}`);
             const data = await res.json();
-            allApiUsers = allApiUsers.concat(data.data || []);
+            const apiUsers = data.data || [];
+            const allEmails = new Set();
+            const mergedUsers = [...defaultUsers, ...apiUsers].filter(u => {
+                const email = (u.email || '').toLowerCase();
+                if (allEmails.has(email)) return false;
+                allEmails.add(email);
+                return true;
+            });
+            usersData = mergedUsers;
+            renderTable(usersData);
+        } catch {
+            showToast("Failed to fetch user data.");
         }
-
-        // Merge defaults + API users
-        const mergedUsers = [...defaultUsers, ...allApiUsers].filter(u => {
-            const email = (u.email || '').toLowerCase();
-            if (allEmails.has(email)) return false;
-            allEmails.add(email);
-            return true;
-        });
-
-        usersData = mergedUsers;
-        renderTable(usersData);
-    } catch {
-        showToast("Failed to fetch user data.");
     }
-}
-
 
     function renderTable(users) {
         document.querySelector('#userTable tbody').innerHTML = users.map(user => `
@@ -557,7 +548,23 @@ async function fetchUsers() {
     };
 
     fetchUsers();
+    async function fetchUsers(page = 1, keepExisting = true) {
+    try {
+        const res = await fetch(`https://reqres.in/api/users?page=${page}`);
+        const data = await res.json();
+        const apiUsers = data.data || [];
+        
+        if (!keepExisting || usersData.length === 0) {
+            usersData = [...defaultUsers, ...apiUsers];
+        } else {
+            usersData.push(...apiUsers.filter(u => !usersData.some(x => x.id === u.id)));
+        }
+        renderTable(usersData);
+    } catch {
+        showToast("Failed to fetch user data.");
+    }
+}
+
 </script>
 </body>
 </html>
-
