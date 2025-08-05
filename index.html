@@ -433,24 +433,34 @@ td img {
         {id:2, first_name:"Jane", last_name:"Smith", email:"jane.smith@example.com", avatar:"https://i.pravatar.cc/48?u=jane"}
     ];
 
-    async function fetchUsers(page = 1) {
-        try {
+    async function fetchUsers() {
+    try {
+        const allEmails = new Set();
+        let allApiUsers = [];
+
+        // 🔹 Loop through all available pages (Reqres has 2 pages, but can adjust)
+        for (let page = 1; page <= 2; page++) {
             const res = await fetch(`https://reqres.in/api/users?page=${page}`);
             const data = await res.json();
-            const apiUsers = data.data || [];
-            const allEmails = new Set();
-            const mergedUsers = [...defaultUsers, ...apiUsers].filter(u => {
-                const email = (u.email || '').toLowerCase();
-                if (allEmails.has(email)) return false;
-                allEmails.add(email);
-                return true;
-            });
-            usersData = mergedUsers;
-            renderTable(usersData);
-        } catch {
-            showToast("Failed to fetch user data.");
+            allApiUsers = allApiUsers.concat(data.data || []);
         }
+
+        // 🔹 Merge defaults + all API users without duplicates
+        const mergedUsers = [...defaultUsers, ...allApiUsers].filter(u => {
+            const email = (u.email || '').toLowerCase();
+            if (allEmails.has(email)) return false;
+            allEmails.add(email);
+            return true;
+        });
+
+        usersData = mergedUsers;
+        renderTable(usersData);
+
+    } catch {
+        showToast("Failed to fetch user data.");
     }
+}
+
 
     function renderTable(users) {
         document.querySelector('#userTable tbody').innerHTML = users.map(user => `
@@ -568,3 +578,4 @@ td img {
 </script>
 </body>
 </html>
+
