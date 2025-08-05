@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise User Management</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ :root {
+    --primary-color: #4361EE;
+    --secondary-color: #F8F9FA;
+    --text-color: #343A40;
+    --border-color: #E9ECEF;
+    --success-color: #28A745;
+    --error-color: #DC3545;
+    --warning-color: #FFC107;
+    --font-family: 'Inter', sans-serif;
+}
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+}
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+.search-container {
+    position: relative;
+}
+.search-container input {
+    padding: 0.75rem 2.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.search-container i {
+    position: absolute;
+    top: 50%;
+    left: 0.9rem;
+    transform: translateY(-50%);
+    color: #6C757D;
+    pointer-events: none;
+}
+.search-container input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
+}
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+.btn-primary {
+    background-color: #fff;
+    color: var(--primary-color);
+}
+.btn-primary:hover {
+    background-color: #F8F9FA;
+}
+.btn-secondary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+.btn-secondary:hover {
+    opacity: 0.9;
+}
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+.card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+th, td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+th {
+    background-color: #F1F3F5;
+    color: #6C757D;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+tr:last-child td {
+    border-bottom: none;
+}
+td img {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--border-color);
+}
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+.btn-icon {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.btn-icon:hover {
+    background-color: #F1F3F5;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 0;
+}
+.pagination-btn {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: #fff;
+}
+.pagination-btn:hover {
+    opacity: 0.9;
+}
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+.modal-content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.modal-content h3 {
+    margin: 0 0 1.5rem;
+    font-weight: 600;
+    text-align: center;
+}
+.modal-content input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+.btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+#confirmModal .btn-group {
+    justify-content: center;
+}
+.btn-cancel {
+    background-color: #E9ECEF;
+    color: var(--text-color);
+}
+.toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 1.2rem 1rem;
+    width: 150px;
+    min-height: 10px;
+    border-radius: 6px;
+    background-color: #000;
+    color: #fff;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 1001;
+    display: none;
+}
+
+/* Tablet adjustments */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    .header-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .search-container {
+        flex: 1;
+        width: 100%;
+    }
+    .search-container input {
+        width: 80%;
+    }
+    .btn-primary {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+    table th, table td {
+        padding: 0.75rem;
+    }
+    .modal-content {
+        width: 90%;
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 500px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead {
+        display: none;
+    }
+    tbody {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2%;
+        justify-content: center;
+    }
+    tr {
+        background: #fff;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        width: 48%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+    td {
+        border: none;
+        padding: 0.5rem 0;
+        width: 100%;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    td img {
+        width: 60px;
+        height: 60px;
+        display: block;
+        margin: 0 auto 0.5rem;
+    }
+    .action-buttons {
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    .modal-content {
+        width: 90%;
+        max-width: 380px;
+        padding: 1rem;
+        box-sizing: border-box;
+        overflow-y: auto;
+        max-height: 90vh;
+    }
+    .modal-content input {
+        font-size: 0.85rem;
+        width: 100%;
+    }
+    .toast {
+        width: 85%;
+        right: 7.5%;
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 350px) {
+    tr {
+        width: 100%;
+    }
+    td img {
+        width: 70px;
+        height: 70px;
+    }
+    .modal-content {
+        width: 95%;
+        padding: 0.75rem;
+    }
+}
+
+/* Add button adjustments for smaller screens */
+@media (max-width: 768px) {
+    .header-controls {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .btn-primary {
+        flex: 1 1 100%;
+        text-align: center;
+    }
+}
+@media (max-width: 500px) {
+    .btn-primary {
+        width: 100%; 
+        margin-top: 0.5rem;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1> User Dashboard</h1>
+    <div class="header-controls">
+        <div class="search-container">
+            <i class="fa fa-search"></i>
+            <input type="text" id="searchBar" placeholder="Search users...">
+        </div>
+        <button id="addUserBtn" class="btn btn-primary"><i class="fa fa-plus"></i> Add New User</button>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="pagination">
+    <button id="prevPage" class="pagination-btn">Previous</button>
+    <button id="nextPage" class="pagination-btn">Next</button>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal" id="userModal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Add New User</h3>
+        <input type="text" id="userName" placeholder="Full Name" required>
+        <input type="email" id="userEmail" placeholder="Email Address" required>
+        <input type="text" id="userJob" placeholder="Job Title" required>
+        <div class="btn-group">
+            <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+            <button id="saveUser" class="btn btn-secondary">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal" id="confirmModal">
+    <div class="modal-content">
+        <h3 id="confirmText">Confirm Delete</h3>
+        <div class="btn-group">
+            <button class="btn btn-cancel" onclick="closeConfirm()">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn btn-secondary">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toastMsg"></div>
+
+<script>
+    let currentPage = 1;
+    let usersData = [];
+    let editingUserId = null;
+    let deleteUserId = null;
+
+    const defaultUsers = [
+        {id:1, first_name:"John", last_name:"Doe", email:"john.doe@example.com", avatar:"https://i.pravatar.cc/48?u=john"},
+        {id:2, first_name:"Jane", last_name:"Smith", email:"jane.smith@example.com", avatar:"https://i.pravatar.cc/48?u=jane"}
+    ];
+
+    async function fetchUsers(page = 1) {
+        try {
+            const res = await fetch(`https://reqres.in/api/users?page=${page}`);
+            const data = await res.json();
+            const apiUsers = data.data || [];
+            const allEmails = new Set();
+            const mergedUsers = [...defaultUsers, ...apiUsers].filter(u => {
+                const email = (u.email || '').toLowerCase();
+                if (allEmails.has(email)) return false;
+                allEmails.add(email);
+                return true;
+            });
+            usersData = mergedUsers;
+            renderTable(usersData);
+        } catch {
+            showToast("Failed to fetch user data.");
+        }
+    }
+
+    function renderTable(users) {
+        document.querySelector('#userTable tbody').innerHTML = users.map(user => `
+            <tr data-id="${user.id}">
+                <td><img src="${user.avatar}" alt="Avatar"></td>
+                <td>${user.first_name || user.name} ${user.last_name || ''}</td>
+                <td>${user.email}</td>
+                <td class="action-buttons">
+                    <button class="btn-icon" onclick="editUser(${user.id})"><i class="fa fa-pencil"></i></button>
+                    <button class="btn-icon" onclick="confirmDelete(${user.id})"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    document.getElementById('searchBar').addEventListener('input', e => {
+        const query = e.target.value.toLowerCase();
+        renderTable(usersData.filter(u =>
+            `${u.first_name} ${u.last_name || ''}`.toLowerCase().includes(query) ||
+            (u.email || '').toLowerCase().includes(query)
+        ));
+    });
+
+    document.getElementById('prevPage').onclick = () => currentPage > 1 ? fetchUsers(--currentPage) : showToast("First page reached");
+    document.getElementById('nextPage').onclick = () => fetchUsers(++currentPage);
+
+    const modal = document.getElementById('userModal');
+    const confirmModal = document.getElementById('confirmModal');
+
+    document.getElementById('addUserBtn').onclick = () => {
+        editingUserId = null;
+        document.getElementById('modalTitle').textContent = "Add New User";
+        document.getElementById('userName').value = '';
+        document.getElementById('userEmail').value = '';
+        document.getElementById('userJob').value = '';
+        modal.style.display = 'flex';
+    };
+
+    function closeModal() { modal.style.display = 'none'; }
+    function closeConfirm() { confirmModal.style.display = 'none'; }
+
+    document.getElementById('saveUser').onclick = async () => {
+        const name = userName.value.trim();
+        const email = userEmail.value.trim().toLowerCase();
+        const job = userJob.value.trim();
+        if (!name || !email || !job) return showToast("All fields required.");
+        if (usersData.some(u => u.email.toLowerCase() === email && u.id !== editingUserId)) return showToast("Email already exists.");
+        try {
+            if (editingUserId) {
+                await fetch(`https://reqres.in/api/users/${editingUserId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name,email,job}) });
+                usersData = usersData.map(u => u.id === editingUserId ? {...u, first_name:name, email} : u);
+                showToast("User updated.");
+            } else {
+                await fetch(`https://reqres.in/api/users`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name,email,job}) });
+                usersData.unshift({id:Date.now(), first_name:name, last_name:"", email, avatar:`https://i.pravatar.cc/48?u=${Date.now()}`});
+                showToast("User added.");
+            }
+            renderTable(usersData);
+            closeModal();
+        } catch { showToast("Save failed."); }
+    };
+
+    function editUser(id) {
+        const user = usersData.find(u => u.id === id);
+        if (user) {
+            editingUserId = id;
+            document.getElementById('modalTitle').textContent = "Edit User";
+            userName.value = user.first_name;
+            userEmail.value = user.email;
+            userJob.value = user.job || '';
+            modal.style.display = 'flex';
+        }
+    }
+
+    function confirmDelete(id) {
+        deleteUserId = id;
+        confirmModal.style.display = 'flex';
+    }
+
+    document.getElementById('confirmDeleteBtn').onclick = async () => {
+        try {
+            await fetch(`https://reqres.in/api/users/${deleteUserId}`, { method: 'DELETE' });
+            usersData = usersData.filter(u => u.id !== deleteUserId);
+            renderTable(usersData);
+            showToast("User deleted.");
+        } catch { showToast("Delete failed."); }
+        closeConfirm();
+    };
+
+    fetchUsers();
+</script>
+</body>
+</html>
